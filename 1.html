@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简单日历</title>
+    <style>
+        /* 1. 基础样式设定 */
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* 2. 日历容器 */
+        .calendar-container {
+            background: white;
+            width: 350px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        /* 3. 头部样式 (年月显示) */
+        .calendar-header {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* 4. 星期和日期的网格布局 */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr); /* 7列 */
+            gap: 10px;
+            text-align: center;
+        }
+
+        /* 星期标题 (日, 一, 二...) */
+        .day-name {
+            color: #888;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* 具体日期数字 */
+        .date-number {
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            border-radius: 50%; /* 圆形 */
+            cursor: default;
+            transition: background 0.2s;
+        }
+
+        .date-number:hover:not(.empty) {
+            background-color: #f0f0f0;
+        }
+
+        /* "今天"的高亮样式 */
+        .today {
+            background-color: #4a90e2;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .today:hover:not(.empty) {
+            background-color: #357abd;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calendar-container">
+        <div class="calendar-header" id="monthYear"></div>
+
+        <div class="calendar-grid" id="calendarGrid">
+            <div class="day-name">日</div>
+            <div class="day-name">一</div>
+            <div class="day-name">二</div>
+            <div class="day-name">三</div>
+            <div class="day-name">四</div>
+            <div class="day-name">五</div>
+            <div class="day-name">六</div>
+            
+            </div>
+    </div>
+
+    <script>
+        const monthYearEl = document.getElementById('monthYear');
+        const calendarGridEl = document.getElementById('calendarGrid');
+
+        const date = new Date();
+        const currentYear = date.getFullYear();
+        const currentMonth = date.getMonth(); // 注意：0 代表 1月，11 代表 12月
+        const currentDay = date.getDate();
+
+        // 1. 设置标题
+        const monthNames = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"];
+        monthYearEl.innerText = `${currentYear}年 ${monthNames[currentMonth]}`;
+
+        // 2. 计算当月逻辑
+        // 获取当月第一天是星期几 (0-6)
+        const firstDayIndex = new Date(currentYear, currentMonth, 1).getDay();
+        // 获取当月总天数
+        const lastDay = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+        // 3. 渲染空白 (如果是周三开始，前面要有3个空白格)
+        for (let i = 0; i < firstDayIndex; i++) {
+            const emptyDiv = document.createElement('div');
+            emptyDiv.classList.add('date-number', 'empty');
+            calendarGridEl.appendChild(emptyDiv);
+        }
+
+        // 4. 渲染日期
+        for (let i = 1; i <= lastDay; i++) {
+            const dateDiv = document.createElement('div');
+            dateDiv.classList.add('date-number');
+            dateDiv.innerText = i;
+
+            // 如果是今天，添加高亮样式
+            if (i === currentDay) {
+                dateDiv.classList.add('today');
+            }
+
+            calendarGridEl.appendChild(dateDiv);
+        }
+    </script>
+</body>
+</html>
